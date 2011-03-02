@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	>
+	<RelativeLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="40dip"
+	    
+	    android:background="#cccccc">
+	    
+	    <!-- android:layout_height="?android:attr/listPreferredItemHeight" -->
+	    <!-- android:padding="6dip" -->
+	    
+	    <Button
+	        android:id="@+id/settingsBtn"
+	     android:layout_height="fill_parent"
+	     android:layout_width="wrap_content"
+	     android:text="@string/settings"
+	     android:onClick="launchSettings"
+	     
+	     android:layout_alignParentTop="true"
+	     android:layout_alignParentBottom="true"
+	     android:layout_marginRight="10dip"
+	     android:layout_alignParentRight="true"
+	     
+	     android:padding="4dip"
+	     
+	     android:background="@drawable/button_selector"
+	     />
+	    
+	     <Button
+	        android:id="@+id/logoutBtn"
+	     android:layout_height="fill_parent"
+	     android:layout_width="wrap_content"
+	     android:text="@string/logout"
+	     android:onClick="logout"
+	     
+	     android:layout_toLeftOf="@id/settingsBtn"
+	     
+	     android:layout_alignParentTop="true"
+	     android:layout_alignParentBottom="true"
+	     android:layout_marginRight="10dip"
+	     
+	     android:padding="10dip"
+	     
+	     android:background="@drawable/button_selector"
+	     />
+	    
+	     <Button
+	        android:id="@+id/username"
+	     android:layout_height="fill_parent"
+	     android:layout_width="fill_parent"
+	     android:text="@string/username"
+	     
+	     android:layout_toLeftOf="@id/logoutBtn"
+	     
+	     android:layout_alignParentTop="true"
+	     android:layout_alignParentBottom="true"
+	     android:layout_marginRight="10dip"
+	     
+	     android:padding="10dip"
+	     
+	     android:background="#cccccc"
+	     />
+	</RelativeLayout>
+	<com.google.android.maps.MapView
+	    android:id="@+id/mapview"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:clickable="true"
+	    android:apiKey="083lXHRKDwJj9IkITFOm3jEsgF2iE65tFXWngcA"
+	    />
+	    <!--  Roberts: android:apiKey="0tPRDzukPI36QXs8BgVSueLJ3JvxOibYj2z5QAg" -->
+	    <!--     android:apiKey="ABQIAAAATAQU8uUcUrJEvyq1TW7pnhSS-qML6fo2ysJZ_IBIUAnzorXDYBRrHgQSjaec4blINQEsfL8CJmYqmQ" -->
+	    <!--  BTW, Alex's certificate fingerprint: AD:57:18:42:08:48:5D:4B:13:EC:A2:2F:C4:BB:37:82 -->
+    
+</LinearLayout>
