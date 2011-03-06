@@ -29,18 +29,27 @@ public final class R {
         public static final int icon=0x7f02000f;
     }
     public static final class id {
-        public static final int icon=0x7f050004;
+        public static final int azimuth=0x7f050008;
+        public static final int data=0x7f050003;
+        public static final int icon=0x7f05000b;
         public static final int logoutBtn=0x7f050001;
-        public static final int mapview=0x7f050003;
-        public static final int secondLine=0x7f050005;
+        public static final int mapview=0x7f050004;
+        public static final int pitch=0x7f050009;
+        public static final int roll=0x7f05000a;
+        public static final int secondLine=0x7f05000c;
         public static final int settingsBtn=0x7f050000;
         public static final int username=0x7f050002;
+        public static final int xbox=0x7f050005;
+        public static final int ybox=0x7f050006;
+        public static final int zbox=0x7f050007;
     }
     public static final class layout {
         public static final int calories=0x7f030000;
-        public static final int main=0x7f030001;
-        public static final int map=0x7f030002;
-        public static final int temp=0x7f030003;
+        public static final int list_item=0x7f030001;
+        public static final int main=0x7f030002;
+        public static final int map=0x7f030003;
+        public static final int motion=0x7f030004;
+        public static final int temp=0x7f030005;
     }
     public static final class string {
         public static final int app_name=0x7f040001;
