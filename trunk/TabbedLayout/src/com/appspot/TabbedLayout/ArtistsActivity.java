@@ -1,15 +1,13 @@
 package com.appspot.TabbedLayout;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.widget.TextView;
 
-public class ArtistsActivity extends Activity {
+public class ArtistsActivity extends TopBarActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        TextView textview = new TextView(this);
+        setContentView(R.layout.temp);
+        /*TextView textview = new TextView(this);
         textview.setText("This is the Artists tab");
-        setContentView(textview);
+        setContentView(textview);*/
     }
 }

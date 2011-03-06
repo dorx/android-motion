@@ -9,13 +9,17 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
+import android.accounts.Account;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class HelloGoogleMaps extends MapActivity implements LocationListener {
 
@@ -72,7 +76,11 @@ public class HelloGoogleMaps extends MapActivity implements LocationListener {
 	    
 	    // Ask for GPS updates
 	    locationManager.requestLocationUpdates(
-	            LocationManager.GPS_PROVIDER, 0, 0, this);
+	            LocationManager.GPS_PROVIDER, 500 /*every 500 ms*/, 1 /*in meters*/, this);
+	    
+	    
+	    /* You also have to update your top bar status! */
+		updateAccountStatus();
 	}
 	@Override
 	protected void onPause()
@@ -142,8 +150,9 @@ public class HelloGoogleMaps extends MapActivity implements LocationListener {
      
     		// initialize icon
     		Drawable icon = getResources().getDrawable(R.drawable.androidmenuicon1);
-    		icon.setBounds(0, 0, icon.getIntrinsicWidth(), icon
-    				.getIntrinsicHeight());
+    		icon.setBounds(-icon.getIntrinsicWidth()/2, -icon
+    				.getIntrinsicHeight()/2, icon.getIntrinsicWidth()/2, icon
+    				.getIntrinsicHeight()/2);
      
     		// create my overlay and show it
     		HelloItemizedOverlay overlay = new HelloItemizedOverlay(icon, this);
@@ -177,11 +186,62 @@ public class HelloGoogleMaps extends MapActivity implements LocationListener {
     }
 
     
+    /* This class also extends TopBarActivity, but _some_ people think you can only extend
+     * a single class. There are some justifications, but we just find it sad. */
+    
+	public void updateAccountStatus()
+	{
+		Button v = (Button)findViewById(R.id.logoutBtn);
+		v.setText(TopBarActivity.loginButtonStatus());
+		
+		TextView w = (TextView)findViewById(R.id.username);
+
+		if (TabbedLayout.activeAccount != null)
+		{
+			String email = TabbedLayout.activeAccount.name;
+			w.setText(email.substring(0, email.indexOf("@")));
+		}
+		else
+			w.setText("Please login!");
+	}
+    
     public void launchSettings(View view) {
         
     }    
     
     public void logout(View view) {
-    
+    	if (TabbedLayout.activeAccount != null)
+    	{
+    		// logout
+    		TabbedLayout.activeAccount = null;
+    		updateAccountStatus();
+    	}
+    	else
+    	{
+    		// login
+    		Intent intent = new Intent(this, LoginMenu.class);
+    		startActivityForResult(intent, TopBarActivity.LOGIN_CODE);
+    	}
     }
+    // Is overriding onActivityResult
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+    	switch (requestCode) {
+    		case TopBarActivity.LOGIN_CODE:
+    		{
+    			if (resultCode == RESULT_OK)
+    			{
+    				Account a = (Account)data.getExtras().get("account");
+    				TabbedLayout.activeAccount = a;
+    			}
+    			break;
+    		}
+    		default:
+    		{
+    			break;
+    		}
+    	}
+    	updateAccountStatus();
+    }
+    
 }

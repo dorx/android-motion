@@ -65,9 +65,29 @@
 	     android:background="#cccccc"
 	     />
 	</RelativeLayout>
-	<TextView android:id="@+id/data"
+	<TextView android:id="@+id/xbox"
 	     android:layout_height="wrap_content"
-	     android:layout_width="fill_parent"  
+	     android:layout_width="fill_parent"
+	/>
+	<TextView android:id="@+id/ybox"
+	     android:layout_height="wrap_content"
+	     android:layout_width="fill_parent"
+	/>
+	<TextView android:id="@+id/zbox"
+	     android:layout_height="wrap_content"
+	     android:layout_width="fill_parent"
+	/>
+	<TextView android:id="@+id/azimuth"
+	     android:layout_height="wrap_content"
+	     android:layout_width="fill_parent"
+	/>
+	<TextView android:id="@+id/pitch"
+	     android:layout_height="wrap_content"
+	     android:layout_width="fill_parent"
+	/>
+	<TextView android:id="@+id/roll"
+	     android:layout_height="wrap_content"
+	     android:layout_width="fill_parent"
 	/>
 
     

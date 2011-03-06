@@ -8,7 +8,11 @@
     	<uses-library android:name="com.google.android.maps" />
         <activity android:name=".TabbedLayout"
                   android:label="@string/app_name"
-                  android:theme="@android:style/Theme.NoTitleBar">
+                  android:theme="@android:style/Theme.NoTitleBar"
+                  android:screenOrientation="portrait"
+                  >
+                  <!--  Hide keyboard?
+                  android:configChanges="orientation|keyboardHidden|keyboard" -->
             
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,10 +22,16 @@
         <activity android:name=".HelloGoogleMaps"></activity>
         <activity android:name=".ArtistsActivity"></activity>
         <activity android:name=".AlbumsActivity"></activity>
-        <activity android:name=".SongsActivity"></activity>
+        <activity android:name=".CaloriesActivity"></activity>
+        <activity android:name=".MotionActivity"></activity>
+        <activity android:name=".LoginMenu" 
+                  android:screenOrientation="portrait"
+        ></activity>
 
     </application>
 
+<uses-permission android:name="android.permission.GET_ACCOUNTS"></uses-permission>
+<uses-permission android:name="android.permission.USE_CREDENTIALS"></uses-permission>
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
