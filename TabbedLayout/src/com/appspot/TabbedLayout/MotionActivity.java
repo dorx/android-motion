@@ -15,6 +15,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+/**
+ * I record accelerometer and azimuth, pitch, roll data
+ * @author AlexFandrianto
+ *
+ */
+
 public class MotionActivity extends TopBarActivity  implements SensorEventListener {
 	public final static String FILENAME = "motionData.ascn";
 	private FileOutputStream fos;

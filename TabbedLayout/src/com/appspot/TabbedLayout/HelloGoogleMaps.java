@@ -1,5 +1,15 @@
 package com.appspot.TabbedLayout;
 
+/* HelloGoogleMaps
+ * 
+ * displays the TopBar, as TopBarActivity
+ * displays the map, centered on the user
+ * displays the user's location, constantly updating, as the user moves.
+ * 
+ * Does not update if the user has no signal.
+ * There may be a bug where the Map doesn't update unless it has wireless.
+ * */
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,12 +33,21 @@ import android.widget.TextView;
 
 public class HelloGoogleMaps extends MapActivity implements LocationListener {
 
+	/* This overlay item is our whereAmI icon. Currently a flag, but that's ugly 
+	 * Also stores the user's location (latitude, longitude) in a GeoPoint
+	 * */
 	private OverlayItem myLocItem;
-	private HelloItemizedOverlay itemizedoverlay;
-	private Location location; // We listen to this.
-	private ModifiableGeoPoint myGeoPoint;
 	
-    /** Called when the activity is first created. */
+	/* The list of items being overlaid on the world map */
+	private HelloItemizedOverlay itemizedoverlay;
+	private Location location; // We listen to this location for updates.
+	private ModifiableGeoPoint myGeoPoint; // the geopoint stored in myLocItem
+	
+    /** Called when the activity is first created. 
+     * 
+     * Start out by setting up the map and some dummy overlays.
+     * 
+     * */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
@@ -38,21 +57,31 @@ public class HelloGoogleMaps extends MapActivity implements LocationListener {
 	    mapView.setBuiltInZoomControls(true);
 	    
 	    List<Overlay> mapOverlays = mapView.getOverlays();
+	    
+	    // We choose the icon to be overlaid. It's a Drawable.
+	    // The Drawable icon is that of a flag.
 	    Drawable drawable = this.getResources().getDrawable(R.drawable.androidmenuicon1);
 	    itemizedoverlay = new HelloItemizedOverlay(drawable, this);
 	    
+	    // Unnecessary, but we show Japan and Mexico City as examples
 		GeoPoint point = new GeoPoint(19240000,-99120000);
 		OverlayItem overlayitem = new OverlayItem(point, "Hola, Mundo!", "I'm in Mexico City!");
 		GeoPoint point2 = new GeoPoint(35410000, 139460000);
 		OverlayItem overlayitem2 = new OverlayItem(point2, "Sekai, konichiwa!", "I'm in Japan!");
 		
 
-		
+		// Add the geopoints to the list for display
 	    itemizedoverlay.addOverlay(overlayitem);
 	    itemizedoverlay.addOverlay(overlayitem2);
 	    mapOverlays.add(itemizedoverlay);
 	}
 	
+	
+	/**
+	 * onResume: Find the current location
+	 * 
+	 * set us up the locationListener
+	 */
 	@Override
 	protected void onResume()
 	{
@@ -82,6 +111,10 @@ public class HelloGoogleMaps extends MapActivity implements LocationListener {
 	    /* You also have to update your top bar status! */
 		updateAccountStatus();
 	}
+	
+	/**
+	 * Guess what? We're no longer listening when we pause. Duh. Don't waste battery
+	 */
 	@Override
 	protected void onPause()
 	{
@@ -96,6 +129,10 @@ public class HelloGoogleMaps extends MapActivity implements LocationListener {
         return false;
     }
     
+    /** Remove the old icons list, make a new one. Fill it up again.
+     * 
+     * Note that this is all for the sake of the view refreshing. 
+     */
     @Override
     public void onLocationChanged(Location loc) {
     	System.out.println("Location changed: " + loc);
@@ -189,6 +226,11 @@ public class HelloGoogleMaps extends MapActivity implements LocationListener {
     /* This class also extends TopBarActivity, but _some_ people think you can only extend
      * a single class. There are some justifications, but we just find it sad. */
     
+	/* updateAccountStatus
+	 * 
+	 * Chooses how to display information on the top bar:
+	 * Who's logged in and the text on the Login/Logout button
+	 */
 	public void updateAccountStatus()
 	{
 		Button v = (Button)findViewById(R.id.logoutBtn);
@@ -204,11 +246,27 @@ public class HelloGoogleMaps extends MapActivity implements LocationListener {
 		else
 			w.setText("Please login!");
 	}
-    
+	/* Simply put... it's whether or not there is an activeAccount or not */
+	public static String loginButtonStatus()
+	{
+		if (TabbedLayout.activeAccount != null)
+			return "Logout";
+		return "Login";
+	}
+	
+	/* This would handle what happens if you press the launchSettings button, but... */
     public void launchSettings(View view) {
         
     }    
     
+    /* logout: Handles both login and logout of users.
+     * 
+     * If logged in:
+     * TabbedLayout's static activeAccount member is set to null. 
+     * 
+     * If logged out:
+     * Start the LoginMenu activity, forcing the user to choose an account 
+     */
     public void logout(View view) {
     	if (TabbedLayout.activeAccount != null)
     	{
@@ -223,7 +281,19 @@ public class HelloGoogleMaps extends MapActivity implements LocationListener {
     		startActivityForResult(intent, TopBarActivity.LOGIN_CODE);
     	}
     }
-    // Is overriding onActivityResult
+
+    /* What we do here depends on the activities we've started.
+     * 
+     * LOGIN_CODE: We force someone to pick an account, and they either chose one or cancelled
+     * 	This is when LoginMenu ends.
+     * 	Note that picking a new account triggers the AccountInfo activity.
+     * AUTHENTICATE_CODE: Just after picking an account, we then setup TabbedLayout's httpclient
+     * 	This case is when AccountInfo ends.
+     * 
+     * Note: Currently always reauthenticates even if the chosen account is the same as the current one
+     * 
+     */
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
     	switch (requestCode) {
@@ -233,6 +303,38 @@ public class HelloGoogleMaps extends MapActivity implements LocationListener {
     			{
     				Account a = (Account)data.getExtras().get("account");
     				TabbedLayout.activeAccount = a;
+    				
+    				// Give up old connection
+    				if (TabbedLayout.http_client != null)
+    					TabbedLayout.http_client.getConnectionManager().shutdown();
+    				
+    				
+    				// And then we need to login!!!
+    				Intent intent = new Intent(this, AccountInfo.class);
+    				intent.putExtra("account", a);
+    				startActivityForResult(intent, TopBarActivity.AUTHENTICATE_CODE);
+    			}
+    			else
+    			{
+    				// if it fails, we're storing null
+    				TabbedLayout.activeAccount = null;
+    			}
+    			break;
+    		}
+    		case TopBarActivity.AUTHENTICATE_CODE:
+    		{
+    			if (resultCode == RESULT_OK)
+    			{
+    				// Yay we got an HttpClient with good cookies!
+    				ParcelableHttpClient a = (ParcelableHttpClient)data.getExtras().get("client");
+    				TabbedLayout.http_client = a;
+    				
+    				// and then we're done...
+    			}
+    			else
+    			{
+    				// if it fails, we need to store null, right?
+    				TabbedLayout.http_client = null;
     			}
     			break;
     		}
@@ -241,6 +343,7 @@ public class HelloGoogleMaps extends MapActivity implements LocationListener {
     			break;
     		}
     	}
+    	// The situation might have changed, so the top bar needs to be refreshed.
     	updateAccountStatus();
     }
     

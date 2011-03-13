@@ -1,5 +1,10 @@
 package com.appspot.TabbedLayout;
 
+/**
+ * Just think of a ParcelableHttpClient as a DefaultHttpClient.
+ * There's really nothing different.
+ */
+
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.os.Parcel;

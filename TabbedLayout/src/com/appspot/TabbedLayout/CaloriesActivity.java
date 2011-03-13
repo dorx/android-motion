@@ -1,5 +1,8 @@
 package com.appspot.TabbedLayout;
 
+/* Displays the previously recorded motion data.
+ * */
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,6 +25,10 @@ public class CaloriesActivity extends TopBarActivity {
         setContentView(textview);*/
     }
     
+    /* Read the recorded file on the filesystem
+     * 
+     * Then just display it in a Textview.
+     * */
     protected void onResume()
     {
     	super.onResume();
