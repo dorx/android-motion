@@ -1,5 +1,31 @@
 package com.appspot.TabbedLayout;
 
+/* TabbedLayout is the Main Activity. This is run first because the AndroidManifest says so!
+ * We will eventually rename TabbedLayout to whatever name we pick for our App.
+ * 
+ * TabbedLayout holds 5 tabs
+ * ArtistsActivity, which will eventually be replaced by HomeActivity.
+ * HelloGoogleMaps, which will eventually be renamed.
+ * CaloriesActivity, which currently displays the previously recorded motion/orientation data.
+ * AlbumsActivity, which does nothing. Will be replaced with FriendsActivity
+ * MotionActivity, which currently recorded the accelerometer and azimuth/pitch roll.
+ * 
+ * Logics done here:
+ * onCreate: Create tabs, and default to CaloriesActivity tab. Will switch to HomeActivity later.
+ * Reselects the last logged in person.
+ * 		Slight mistake: Doesn't actually authenticate until you reselect an account
+ * onStop: Saves the current Account in 'SharedPreferences'
+ * 
+ * One way to send and receive messages is with
+ * new AuthenticatedRequestTask().execute(urlToExecute);
+ * Which just visits the URL with GET.
+ * 
+ * In order to do something with POST
+ * See private class AuthenticatedRequestTask
+ * 	Instead of using an HttpGet, I suspect an HttpPost would be more appropriate.
+ * 
+ */
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,9 +33,6 @@ import java.io.InputStreamReader;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -25,11 +48,29 @@ import android.widget.Toast;
 public class TabbedLayout extends TabActivity {
     /** Called when the activity is first created. */
 
-	public static ParcelableHttpClient http_client = null;
+	//the httpclient which has all our cookies and will help us with transactions with the database
+	public static ParcelableHttpClient http_client = null; 
+	
+	// The current account we have active. Its credentials are vital for setting up the client
+	// correctly.
 	public static Account activeAccount = null;
+	
+	// Preferences name is a just the private filename we use to identify our SharedPreferences
+	// The SharedPreferences stores the last logged in account, currently
 	public static final String PREFS_NAME = "AndroidMotionPrefs";
 	
+	
     @Override
+    /* onCreate makes the 5 tabs of the TabActivity
+     * ArtistsActivity, which will eventually be replaced by HomeActivity.
+     * HelloGoogleMaps, which will eventually be renamed.
+     * CaloriesActivity, which currently displays the previously recorded motion/orientation data.
+     * AlbumsActivity, which does nothing. Will be replaced with FriendsActivity
+     * MotionActivity, which currently recorded the accelerometer and azimuth/pitch roll.
+     * 
+     * Then it selects the account of the last logged in user.
+     * 	Slight mistake: doesn't authenticate that user, until you reselect one
+     */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
@@ -79,6 +120,15 @@ public class TabbedLayout extends TabActivity {
         
         restorePreferences();
     }
+    
+    /* restorePreferences
+     * 
+     * Obtain the SharedPreferences for this activity and get the account out.
+     * The account string for the 'alexfandrianto@gmail.com' account is just
+     * 	alexfandrianto
+     * 
+     * Saving this on the phone allows us to remember who was last logged in when restarting the app
+     */
     public void restorePreferences()
     {
     	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -102,6 +152,10 @@ public class TabbedLayout extends TabActivity {
     	}
     }
     
+    /* onStop
+     * 
+     * Save the current account in SharedPreferences     * 
+     */
     @Override
     public void onStop() {
     	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -119,19 +173,31 @@ public class TabbedLayout extends TabActivity {
     
     
     /* 
-     * AUTHENTICATION DONE HERE
-     * 
+     * AUTHENTICATED SENDING AND RECEIVING DONE HERE
      * 
      * 
      * */
 
 
+    /* By calling new AuthenticatedRequestTask().execute(String url)
+     * You can asyncrhonously perform an http request
+     * 
+     * This uses the ParcelableHttpClient http_client that TabbedLayout stores
+     * 
+     * Make/modify this if you want to use HTTP POST instead of HTTP GET
+     */
 	private class AuthenticatedRequestTask extends AsyncTask<String, Void, HttpResponse> {
+		/* 
+		 * The execute() function for AsyncTask really calls doInBackground
+		 * 
+		 * So expect this to eventually be called and run.
+		 * The HttpClient will visit the url passed into the AuthenticatedRequestTask
+		 */
 		@Override
 		protected HttpResponse doInBackground(String... urls) {
 			try {
 				System.out.println("Hey: "+urls[0]);
-				HttpGet http_get = new HttpGet(urls[0]);
+				HttpGet http_get = new HttpGet(urls[0]); // It's a Get!
 				return http_client.execute(http_get);
 			} catch (ClientProtocolException e) {
 				// TODO Auto-generated catch block
@@ -143,11 +209,13 @@ public class TabbedLayout extends TabActivity {
 			return null;
 		}
 		
+		/* We want to actually obtain the information and use it in our normal thread */
 		protected void onPostExecute(HttpResponse result) {
 			processResponse(result);
 		}
 	}
 	
+	/* All we do here is make a Toast of the first line of the HttpResponse */
 	public void processResponse(HttpResponse result)
 	{
 		try {
@@ -164,6 +232,7 @@ public class TabbedLayout extends TabActivity {
 		}
 	}
 	
+	/* An example of how to visit a URL with the AuthenticatedRequestTask */
 	public void sendSomething()
 	{
     	String urlToExecute = "dummy";//http://twyttyr.appspot.com/?newTwyte=" + postInfo;
