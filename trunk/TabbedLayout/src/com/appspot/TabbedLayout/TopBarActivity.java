@@ -1,5 +1,7 @@
 package com.appspot.TabbedLayout;
 
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.accounts.Account;
 import android.app.Activity;
 import android.content.Intent;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 public class TopBarActivity extends Activity{
 	
 	public static final int LOGIN_CODE = 1;
+	public static final int AUTHENTICATE_CODE = 2;
 	
 	protected void onResume()
 	{
@@ -69,6 +72,39 @@ public class TopBarActivity extends Activity{
     			{
     				Account a = (Account)data.getExtras().get("account");
     				TabbedLayout.activeAccount = a;
+    				
+    				// Give up old connection
+    				if (TabbedLayout.http_client != null)
+    					TabbedLayout.http_client.getConnectionManager().shutdown();
+    				
+    				System.out.println("As we start...");
+    				// And then we need to login!!!
+    				Intent intent = new Intent(this, AccountInfo.class);
+    				intent.putExtra("account", a);
+    				startActivityForResult(intent, AUTHENTICATE_CODE);
+    				System.out.println("Activity started/ing...");
+    			}
+    			else
+    			{
+    				// if it fails, we're storing null
+    				TabbedLayout.activeAccount = null;
+    			}
+    			break;
+    		}
+    		case AUTHENTICATE_CODE:
+    		{
+    			System.out.println("We're done with the AccountInfo");
+    			if (resultCode == RESULT_OK)
+    			{
+    				ParcelableHttpClient a = (ParcelableHttpClient)data.getExtras().get("client");
+    				TabbedLayout.http_client = a;
+    				
+    				// and then we're done...
+    			}
+    			else
+    			{
+    				// if it fails, we need to store null, right?
+    				TabbedLayout.http_client = null;
     			}
     			break;
     		}
