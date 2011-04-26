@@ -9,6 +9,11 @@ function [ data ] = reduction1( rawData, iterations, itStart, itLength, NFFT )
 %   data = reduction1(rawData, 20, 2, 650, 100)
 %   The data matrix has dimensions: iterations x 3
 
+%   Iterations - number of training samples to return
+%   itLength - number of lines of rawData to use per sample
+%   itStart - offset (how many blocks/samples skipped since beginning of file)
+%   NFFT - # frequencies used in FFT
+
 %   This function could probably be vectorized for efficiency, BUT
 %   since it needs to be converted to Java later, there's little reason to
 %   do so.
