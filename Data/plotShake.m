@@ -1,9 +1,13 @@
+clear all
+close all
+clc
+
 %D = load('9_desk.acsn');
 %D = load('5desktop01.acsn');
 %D = load('B/sevendesktwo.acsn'); % not very impressive
 %D = load('G/walking_8_mnf.acsn'); % looks nice 
 %D = load('morning/morning_2.acsn');
-D = load('C:\Users\AlexFandrianto\Desktop\Articles\CS141b\02_11_11_alex_walk.acsn');
+D = load('C:\Users\AlexFandrianto\Desktop\Articles\CS141b\TeamAAndroidMotion\Data\SensorRecordings\Daiwei_running_04151913.acsn');
 E = D;
 for i=1:60
     D = E(1000*(i-1)+1:1000*i, :);

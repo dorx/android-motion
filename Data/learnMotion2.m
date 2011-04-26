@@ -2,73 +2,26 @@ clear all; % cleans up all variables
 close all; % closes all figures
 clc; % clean up the command window too
 
-pwd
-
 A = load('C:\Users\AlexFandrianto\Documents\MATLAB\CS141\BackProp\Data\Alex_running_04051515.acsn');
-B = load('C:\Users\AlexFandrianto\Documents\MATLAB\CS141\BackProp\Data\Alex_walking_04051545.acsn');
+B = load('C:\Users\AlexFandrianto\Documents\MATLAB\CS141\BackProp\Data\Alex_biking_04121521.acsn');
 
 C = load('C:\Users\AlexFandrianto\Documents\MATLAB\CS141\BackProp\Data\Doris_running_04101750.acsn');
-D = load('C:\Users\AlexFandrianto\Documents\MATLAB\CS141\BackProp\Data\Robert_walking_04151110.acsn');
+D = load('C:\Users\AlexFandrianto\Documents\MATLAB\CS141\BackProp\Data\Daiwei_biking_04121519.acsn');
 
 data = zeros(40, 3);
 values = zeros(40, 1);
 
-for i=1:20
-    segmentA = A(1000*(i+2)+1:1000*(i+3), :);
-    segmentB = B(1000*(i+2)+1:1000*(i+3), :);
-    
-    % Combine all 3 frequencies using sqrt of sum of squares
-    % take the mean, std, and energy. Energy is found by squaring each
-    % frequency's amplitude divided by the number of freqs. Skip corr.
-    
-    sA = sqrt(segmentA(:, 1).^2 + segmentA(:, 2).^2 + segmentA(:, 3).^2);
-    sB = sqrt(segmentB(:, 1).^2 + segmentB(:, 2).^2 + segmentB(:, 3).^2);
-    
-    NFFT = 100;
-    
-    fA = abs(fft(sA,NFFT));
-    fB = abs(fft(sB,NFFT));
-    
-    data(i, :) = [mean(fA), std(fA), sum(fA.^2) / length(fA)]; % is running
-    data(20+i, :) = [mean(fB), std(fB), sum(fB.^2) / length(fB)]; % is walking
-    values(i) = 1;
-    values(20+i) = 0;
-end
+data(1:20, :) = reduction1(A, 20, 3, 650, 100);
+data(21:40, :) = reduction1(B, 20, 3, 650, 100);
+values(1:20, :) = 1;
 
 dataTest = zeros(100, 3);
 valuesTest = zeros(100, 1);
 
-for i=1:30
-    segmentC = C(1000*(i+3)+1:1000*(i+4), :);
-    segmentD = D(1000*(i+3)+1:1000*(i+4), :);
-    
-    % Combine all 3 frequencies using sqrt of sum of squares
-    % take the mean, std, and energy. Energy is found by squaring each
-    % frequency's amplitude divided by the number of freqs. Skip corr.
-    
-    sC = sqrt(segmentC(:, 1).^2 + segmentC(:, 2).^2 + segmentC(:, 3).^2);
-    sD = sqrt(segmentD(:, 1).^2 + segmentD(:, 2).^2 + segmentD(:, 3).^2);
-    
-    NFFT = 100;
-    
-    fC = abs(fft(sC,NFFT));
-    fD = abs(fft(sD,NFFT));
-    
-    dataTest(i, :) = [mean(fC), std(fC), sum(fC.^2) / length(fC)]; % is running
-    dataTest(50+i, :) = [mean(fD), std(fD), sum(fD.^2) / length(fD)]; % is walking
-    valuesTest(i) = 1;
-    valuesTest(50+i) = 0;
-end
+dataTest(1:50, :) = reduction1(C, 50, 33, 650, 100);
+dataTest(51:100, :) = reduction1(D, 50, 33, 650, 100);
+valuesTest(1:50, :) = 1;
 
-% And just look at the 'data' value. It's pretty clear that running and
-% walking are different
-
-% Entries are:
-% mean, standard deviation, energy, (+1 = running, -1 = walking)
-
-
-data = data / 10000;
-dataTest = dataTest / 10000;
 
 
 % Layer 0 has 2 (+1 threshold) input
@@ -95,7 +48,7 @@ errors1 = zeros(length(data), 1);
 iteration = 0;
 meanTrialError = []
 meanTestError = []
-while iteration < 1000%abs(oldMean - mean(errors1)) > 10^-7
+while iteration < 500%abs(oldMean - mean(errors1)) > 10^-7
     %oldMean = mean(errors1);
     iteration = iteration + 1;
     display(iteration);%display(oldMean);
@@ -204,6 +157,7 @@ while iteration < 1000%abs(oldMean - mean(errors1)) > 10^-7
     %pause(.005);
 end
 
+plot(1:length(meanTestError), meanTestError, 'r', 1:length(meanTrialError), meanTrialError, 'g')
 % errors1 = zeros(900, 1);
 % for i=1:length(scaledPoints)
 %     pt = scaledPoints(i, :)';
