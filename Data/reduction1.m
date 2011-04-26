@@ -21,7 +21,7 @@ A = rawData;
 data = zeros(iterations, 3);
 
 for i=1:iterations
-    segmentA = A(1000*(itStart)+1:1000*(itStart+1), :);
+    segmentA = A(itLength * (itStart) + 1: itLength * (itStart+1), :);
     
     % Combine all 3 frequencies using sqrt of sum of squares
     % take the mean, std, and energy. Energy is found by squaring each
