@@ -29,8 +29,6 @@ for i=1:iterations
     
     sA = sqrt(segmentA(:, 1).^2 + segmentA(:, 2).^2 + segmentA(:, 3).^2);
     
-    NFFT = 100;
-    
     fA = abs(fft(sA,NFFT));
     
     data(i, :) = [mean(sA), std(sA), sum(fA.^2) / length(fA)];
