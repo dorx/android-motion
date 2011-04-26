@@ -8,52 +8,60 @@ B = load('C:\Users\AlexFandrianto\Documents\MATLAB\CS141\BackProp\Data\Alex_walk
 data = zeros(40, 3);
 values = zeros(40, 1);
 
-for i=1:20
-    segmentA = A(1000*(i+2)+1:1000*(i+3), :);
-    segmentB = B(1000*(i+2)+1:1000*(i+3), :);
-    
-    % Combine all 3 frequencies using sqrt of sum of squares
-    % take the mean, std, and energy. Energy is found by squaring each
-    % frequency's amplitude divided by the number of freqs. Skip corr.
-    
-    sA = sqrt(segmentA(:, 1).^2 + segmentA(:, 2).^2 + segmentA(:, 3).^2);
-    sB = sqrt(segmentB(:, 1).^2 + segmentB(:, 2).^2 + segmentB(:, 3).^2);
-    
-    NFFT = 100;
-    
-    fA = abs(fft(sA,NFFT));
-    fB = abs(fft(sB,NFFT));
-    
-    data(i, :) = [mean(fA), std(fA), sum(fA.^2) / length(fA)]; % is running
-    data(20+i, :) = [mean(fB), std(fB), sum(fB.^2) / length(fB)]; % is walking
-    values(i) = 1;
-    values(20+i) = 0;
-end
+data(1:20, :) = reduction1(A, 20, 3, 650, 100);
+data(21:40, :) = reduction1(B, 20, 3, 650, 100);
+values(1:20, :) = 1;
+
+% for i=1:20
+%     segmentA = A(1000*(i+2)+1:1000*(i+3), :);
+%     segmentB = B(1000*(i+2)+1:1000*(i+3), :);
+%     
+%     % Combine all 3 frequencies using sqrt of sum of squares
+%     % take the mean, std, and energy. Energy is found by squaring each
+%     % frequency's amplitude divided by the number of freqs. Skip corr.
+%     
+%     sA = sqrt(segmentA(:, 1).^2 + segmentA(:, 2).^2 + segmentA(:, 3).^2);
+%     sB = sqrt(segmentB(:, 1).^2 + segmentB(:, 2).^2 + segmentB(:, 3).^2);
+%     
+%     NFFT = 100;
+%     
+%     fA = abs(fft(sA,NFFT));
+%     fB = abs(fft(sB,NFFT));
+%     
+%     data(i, :) = [mean(sA), std(sA), sum(fA.^2) / length(fA)]; % is running
+%     data(20+i, :) = [mean(sB), std(sB), sum(fB.^2) / length(fB)]; % is walking
+%     values(i) = 1;
+%     values(20+i) = 0;
+% end
 
 dataTest = zeros(100, 3);
 valuesTest = zeros(100, 1);
 
-for i=1:50
-    segmentA = A(1000*(i+23)+1:1000*(i+24), :);
-    segmentB = B(1000*(i+23)+1:1000*(i+24), :);
-    
-    % Combine all 3 frequencies using sqrt of sum of squares
-    % take the mean, std, and energy. Energy is found by squaring each
-    % frequency's amplitude divided by the number of freqs. Skip corr.
-    
-    sA = sqrt(segmentA(:, 1).^2 + segmentA(:, 2).^2 + segmentA(:, 3).^2);
-    sB = sqrt(segmentB(:, 1).^2 + segmentB(:, 2).^2 + segmentB(:, 3).^2);
-    
-    NFFT = 100;
-    
-    fA = abs(fft(sA,NFFT));
-    fB = abs(fft(sB,NFFT));
-    
-    dataTest(i, :) = [mean(fA), std(fA), sum(fA.^2) / length(fA)]; % is running
-    dataTest(50+i, :) = [mean(fB), std(fB), sum(fB.^2) / length(fB)]; % is walking
-    valuesTest(i) = 1;
-    valuesTest(50+i) = 0;
-end
+dataTest(1:50, :) = reduction1(A, 50, 33, 650, 100);
+dataTest(51:100, :) = reduction1(B, 50, 33, 650, 100);
+valuesTest(1:50, :) = 1;
+
+% for i=1:50
+%     segmentA = A(1000*(i+23)+1:1000*(i+24), :);
+%     segmentB = B(1000*(i+23)+1:1000*(i+24), :);
+%     
+%     % Combine all 3 frequencies using sqrt of sum of squares
+%     % take the mean, std, and energy. Energy is found by squaring each
+%     % frequency's amplitude divided by the number of freqs. Skip corr.
+%     
+%     sA = sqrt(segmentA(:, 1).^2 + segmentA(:, 2).^2 + segmentA(:, 3).^2);
+%     sB = sqrt(segmentB(:, 1).^2 + segmentB(:, 2).^2 + segmentB(:, 3).^2);
+%     
+%     NFFT = 100;
+%     
+%     fA = abs(fft(sA,NFFT));
+%     fB = abs(fft(sB,NFFT));
+%     
+%     dataTest(i, :) = [mean(sA), std(sA), sum(fA.^2) / length(fA)]; % is running
+%     dataTest(50+i, :) = [mean(sB), std(sB), sum(fB.^2) / length(fB)]; % is walking
+%     valuesTest(i) = 1;
+%     valuesTest(50+i) = 0;
+% end
 
 % And just look at the 'data' value. It's pretty clear that running and
 % walking are different
@@ -62,14 +70,14 @@ end
 % mean, standard deviation, energy, (+1 = running, -1 = walking)
 
 
-data = data / 10000;
-dataTest = dataTest / 10000;
+%data = data / 10000;
+%dataTest = dataTest / 10000;
 
 
 % Layer 0 has 2 (+1 threshold) input
     % This would be our random point in the grid.
-% Layer 1 has 10 inputs (+1 threshold) input
-% Layer 2 has 10 inputs (+1 threshold) input
+% Layer 1 has NUM_IN_LAYER1 inputs (+1 threshold) input
+% Layer 2 has NUM_IN_LAYER2 inputs (+1 threshold) input
 % Layer 3 has 1 output
     % Our guess should be compared to the actual value.
 
