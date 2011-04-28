@@ -1,0 +1,62 @@
+clear all; % cleans up all variables
+close all; % closes all figures
+clc; % clean up the command window too
+
+
+%%%%%%%%%%%%%%%%%%% INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+A = load('C:\Users\AlexFandrianto\Documents\MATLAB\CS141\BackProp\Data\Alex_running_04051515.acsn');
+B = load('C:\Users\AlexFandrianto\Documents\MATLAB\CS141\BackProp\Data\Alex_walking_04051545.acsn');
+
+data = zeros(40, 3);
+values = zeros(40, 1);
+
+data(1:20, :) = reduction1(A, 20, 3, 650, 100);
+data(21:40, :) = reduction1(B, 20, 3, 650, 100);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Set verbosity of output (0 to 4)
+setEnvironment('Diagnostic','verbosity',3);
+% Set file ID to write to (1 = stdout)
+setEnvironment('Diagnostic','fid',1);
+
+% Set default values for data and model
+% 
+useBias	= true;
+%
+rand('state',1)
+N		= 100;
+kernel_	= 'gauss';
+width		= 0.5;
+maxIts	= 1000; % Maximum number of iterations
+monIts		= round(maxIts/10); % When to display information
+N		= min([250 N]); % training set has fixed size of 250
+Nt		= 1000;
+
+
+
+%
+% Set up initial hyperparameters - precise settings should not be critical
+% 
+initAlpha	= (1/N)^2;
+% Set beta to zero for classification
+initBeta	= 0;	
+%
+% "Train" a sparse Bayes kernel-based model (relevance vector machine)
+% 
+[weights, used, bias, marginal, alpha, beta, gamma] = ...
+    SB1_RVM(X,t,initAlpha,initBeta,kernel_,width,useBias,maxIts,monIts);
+
+%
+% Load Ripley's test set
+% 
+Xtest	= synth(1:Nt,1:2);
+ttest	= synth(1:Nt,3);
+
+% Compute RVM over test data and calculate error
+% 
+PHI	= SB1_KernelFunction(Xtest,X(used,:),kernel_,width);
+y_rvm	= PHI*weights + bias;
+errs	= sum(y_rvm(ttest==0)>0) + sum(y_rvm(ttest==1)<=0);
+SB1_Diagnostic(1,'RVM CLASSIFICATION test error: %.2f%%\n', errs/Nt*100)
