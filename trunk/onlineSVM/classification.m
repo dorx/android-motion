@@ -4,7 +4,7 @@
 % 2. Classify the test cases in Xtest.
 % 3. Plot the test classification error against number of examples.
 
-lambda = 0.1;
+lambda = 0.075;
 possibleActs = ['walking   ';
                 'running   ';
                 'sitting   ';
@@ -27,10 +27,10 @@ act1 = possibleActs(1)
 act2 = possibleActs(2)
 % Get training and testing data
 % %[X, Y] = rawTrainingDataOVA(rootDir, user, activity);
-[XX, YY] = rawTrainingDataOVO(rootDir, user, act1, act2);
+%[XX, YY] = rawTrainingDataOVO(rootDir, user, act1, act2);
 % %redX = reduction(X);
-redXX = reduction2(XX);
-redXX = horzcat(redXX, ones(size(redXX, 1),1));
+redXX = reduction(XX);
+%redXX = horzcat(redXX, ones(size(redXX, 1),1));
 redXX = redXX./repmat(sqrt(sum(redXX.^2,2)),1,size(redXX,2));
 
 % % OVA
@@ -78,7 +78,7 @@ for j=1:length(Numbers)
     
     % obtain margin for test cases
     tic
-    WW2 = onlineSVM(XXtrainSample, YYtrainSample, lambda);
+    WW2 = onlineSVM(XXtrainSample, YYtrainSample, lambda)
     WWall(j, :) = WW2;
     % classify test examples
     y2a = dot(XXtest, repmat(WW2, size(XXtest, 1), 1), 2);
