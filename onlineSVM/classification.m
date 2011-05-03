@@ -4,7 +4,6 @@
 % 2. Classify the test cases in Xtest.
 % 3. Plot the test classification error against number of examples.
 
-lambda = 0.075;
 possibleActs = ['walking   ';
                 'running   ';
                 'sitting   ';
@@ -73,12 +72,15 @@ WWall = zeros(size(Numbers, 2), size(XXtrain, 2));
 yyall = zeros(size(XXtest, 1), size(Numbers, 2));
 
 for j=1:length(Numbers)
+    lambda = 0.0705;
     % subsample the data
     [XXtrainSample, YYtrainSample] = subsample(XXtrain, YYtrain, Numbers(j));
     
     % obtain margin for test cases
     tic
-    WW2 = onlineSVM(XXtrainSample, YYtrainSample, lambda)
+    WW2 = onlineSVM(XXtrainSample, YYtrainSample, lambda);
+    % normalize WW2
+    %WW2 = WW2./repmat(sqrt(sum(WW2.^2,2)),1,size(WW2,2))
     WWall(j, :) = WW2;
     % classify test examples
     y2a = dot(XXtest, repmat(WW2, size(XXtest, 1), 1), 2);
