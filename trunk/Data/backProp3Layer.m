@@ -1,4 +1,4 @@
-function [w1, w2, w3, meanTrialError, meanTestError, ISError, OOSError] = ...
+function [w1, w2, w3, meanTrialError, meanTestError, ISError, OOSError, weights1, weights2, weights3] = ...
     backProp3Layer(data, values, dataTest, valuesTest, NUM_IN_LAYER1, NUM_IN_LAYER2, maxIterations, lambda)
 %backProp3Layer Back propagation on a 3 layer network.
 %   Layer 0 = inputs = # nodes
@@ -81,8 +81,8 @@ meanTestError = ones(maxIterations, 1);
 while iteration < maxIterations
     
     iteration = iteration + 1;
-    display(iteration);
-    display(mean(errors1));
+    %display(iteration);
+    %display(mean(errors1));
     
     meanTrialError(iteration) = mean(errors1);
     
@@ -120,10 +120,6 @@ while iteration < maxIterations
         dE1 = d1 * input0';
 
 
-        old3 = weights3;
-        old2 = weights2;
-        old1 = weights1;
-
         weights3 = weights3 - lambda * dE3;
         weights2 = weights2 - lambda * dE2;
         weights1 = weights1 - lambda * dE1;
@@ -131,20 +127,22 @@ while iteration < maxIterations
 
     end
     
-    errors3 = zeros(length(dataTest), 1);
-    for i=1:length(dataTest)
-        pt = dataTest(i, :)';
-        input0 = [pt; 1];
-        w1_x0 = weights1 * input0;
-        input1 = [sigmoid(w1_x0); 1];
-        w2_x1 = weights2 * input1;
-        input2 = [sigmoid(w2_x1); 1];
-        w3_x2 = weights3 * input2;
-        input3 = sigmoid(w3_x2);
-        
-        expected = valuesTest(i);
-        errors3(i) = errorFunction(expected, input3);
-    end
+%    errors3 = zeros(length(dataTest), 1);
+%     for i=1:length(dataTest)
+%         pt = dataTest(i, :)';
+%         input0 = [pt; 1];
+%         w1_x0 = weights1 * input0;
+%         input1 = [sigmoid(w1_x0); 1];
+%         w2_x1 = weights2 * input1;
+%         input2 = [sigmoid(w2_x1); 1];
+%         w3_x2 = weights3 * input2;
+%         input3 = sigmoid(w3_x2);
+%         
+%         expected = valuesTest(i);
+%         errors3(i) = errorFunction(expected, input3);
+%     end
+    got = classify3Layer(dataTest', weights1, weights2, weights3)';
+    errors3 = errorFunction(valuesTest, got);
     meanTestError(iteration) = mean(errors3);
     
     
