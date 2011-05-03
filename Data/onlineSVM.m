@@ -9,13 +9,17 @@ function W = onlineSVM(Xtrain, Ytrain, lambda)
 %    lambda - parameter for strength of prior.
 %    filename - the file to which the weight vector is saved
 
+
 N = size(Xtrain, 1);        % number of training examples
+
+%Xtrain = horzcat(Xtrain, ones(N, 1));
+
 D = size(Xtrain, 2);        % dimensionality of example
 
 % Normalize input
 Xtrain = Xtrain./repmat(sqrt(sum(Xtrain.^2,2)),1,D);
 
-Iter = 5;         % number of iterations to run weight learning
+Iter = 10;         % number of iterations to run weight learning
 
 % initialize weight vector
 W = zeros(Iter, D);
