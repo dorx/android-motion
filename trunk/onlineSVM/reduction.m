@@ -10,7 +10,8 @@ for i=1:numRows
     redXtrain(i, :) = reduce(Xtrain(i, :));
 end
 
-redXtrain = redXtrain/10000;
+redXtrain = [redXtrain(:, 1) / 10, redXtrain(:, 2), redXtrain(:, 3) / 10^5];
+
 end
 
 function redVec = reduce(Xvec)
