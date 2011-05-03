@@ -19,13 +19,13 @@ Ytrain = [];
 for i=1:N
     fname = l(i,:);
     if ~isdir(fname)
-        s = strsplit(fname(1:end-5), '_')
+        s = strsplit(fname(1:end), '_')
         if strcmp(s(1), user)
             if strcmp(s(2), act1) || strcmp(s(2), act2)
                 if strcmp(s(2), act1)
                     label = 1
                 else
-                    label = 0
+                    label = -1
                 end
                 [X, Y, Z, t] = readData(fullfile(rootDir,fname));
                 % exclude the first and last 10 seconds of data
