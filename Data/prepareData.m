@@ -10,7 +10,7 @@ possibleActs = ['walking   ';
                 'downstairs';
                 'biking    '];
 
-load('C:/Users/AlexFandrianto/Documents/MATLAB/CS141/BackProp/ReducedData/data_Alex_red3.mat');
+load('C:/Users/AlexFandrianto/Documents/MATLAB/CS141/BackProp/ReducedData/data_Daiwei_red3.mat');
 
 TRAIN = cell(6, 1);
 TEST = cell(6, 1);
@@ -38,4 +38,4 @@ for i=1:length(possibleActs(:, 1))
     TEST{i} = testing;
 end
 
-save('C:/Users/AlexFandrianto/Documents/MATLAB/CS141/BackProp/ReducedData/data_Alex_red3_learnable.mat', 'C', 'TRAIN', 'TEST');
+save('C:/Users/AlexFandrianto/Documents/MATLAB/CS141/BackProp/ReducedData/data_Daiwei_red3_learnable.mat', 'C', 'TRAIN', 'TEST');

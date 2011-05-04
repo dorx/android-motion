@@ -5,8 +5,8 @@ clc; % clean up the command window too
 
 possibleActs = ['walking   ';
                 'running   ';
-                %'sitting   ';
-                'idling    ';
+                'sitting   ';
+                %'idling    ';
                 'upstairs  ';
                 'downstairs';
                 'biking    '];
@@ -19,7 +19,7 @@ possibleUser = ['Alex  ';
 possibleUsers = cellstr(possibleUser);
 rootDir = 'C:\Users\AlexFandrianto\Documents\MATLAB\CS141\BackProp\Data';%'C:\Users\Rumpelteazer\Documents\Caltech\AndroidMotion\Data\SensorRecordings\';
 
-user = possibleUsers(1)
+user = possibleUsers(2)
 %activity = possibleActs(1)
 
 rootDir = 'C:\Users\AlexFandrianto\Documents\MATLAB\CS141\BackProp\Data';
@@ -41,4 +41,4 @@ plot3(C{1}(:, 1), C{1}(:, 2), C{1}(:, 3), '.r', ...
     C{6}(:, 1), C{6}(:, 2), C{6}(:, 3), '.k');
 legend(possibleActs)
 
-save('C:/Users/AlexFandrianto/Documents/MATLAB/CS141/BackProp/ReducedData/data_Alex_red3.mat', 'C');
+save('C:/Users/AlexFandrianto/Documents/MATLAB/CS141/BackProp/ReducedData/data_Daiwei_red3.mat', 'C');
