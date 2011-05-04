@@ -1,3 +1,5 @@
+function [redudata] = multi_act_reduction1()
+
 %{ 
 FILE: multi_act_reduction1.m
 
@@ -56,3 +58,4 @@ end
 
 
 fclose(fid);
+end

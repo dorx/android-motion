@@ -17,10 +17,12 @@ possibleUser = ['Alex  ';
                 'Robert';
                 'Wenqi '];
 possibleUsers = cellstr(possibleUser);
-rootDir = '/media/storage/2011S_CS141c_DistributedComputation/svnrepo/Data/SensorRecordings';%'C:\Users\Rumpelteazer\Documents\Caltech\AndroidMotion\Data\SensorRecordings\';
+rootDir = 'SensorRecordings';
 
 user = possibleUsers(1)
 %activity = possibleActs(1)
+
+
 
 confusionM = zeros(length(possibleActs));
 
@@ -74,13 +76,13 @@ valuesTest = [YY(int32(num/2):num, :); YY((num1+int32(num/2)+1):(num1+num), :)];
 % Layer 3 has 1 output
     % Our guess should be compared to the actual value.
 
-[w1, w2, w3, meanTrialError, meanTestError, ISError, OOSError, weights1, weights2, weights3] = ...
-    backProp3Layer(data, values, dataTest, valuesTest, 5, 5, 500, .1);
+[InError, OutError, centers] = kcluster(data, values, dataTest, valuesTest);
 
-cc = sum(abs(classify3LayerStrict(dataTest', w1, w2, w3)' -  valuesTest))
+%cc = sum(abs(classify3LayerStrict(dataTest', w1, w2, w3)' -  valuesTest))
 
-        confusionM(i, j) = cc / length(dataTest);
+        %confusionM(i, j) = cc / length(dataTest);
 
+        confusionM(i, j) = OutError;
     end
 end
 
