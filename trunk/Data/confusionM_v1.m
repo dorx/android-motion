@@ -26,8 +26,8 @@ user = possibleUsers(1)
 
 confusionM = zeros(length(possibleActs));
 
-for i=1:length(possibleActs)
-    for j=1:length(possibleActs)
+for i=1:1%length(possibleActs)
+    for j=3:3%length(possibleActs)
         if i == j
             continue
         end
@@ -37,7 +37,7 @@ for i=1:length(possibleActs)
         display(strcat(act1, '.', act2));
 
 %[X, Y] = rawTrainingDataOVA(rootDir, user, activity);
-[XX, YY] = rawTrainingDataOVO(rootDir, user, act1, act2);
+[XX, YY] = rawTrainingDataOVO_unix(rootDir, user, act1, act2);
 %redX = reduction(X);
 redXX = reduction3(XX);
 
