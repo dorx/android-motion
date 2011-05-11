@@ -25,7 +25,7 @@ Ytrain = [];
 
 for i=1:N
     %fname = l(i,:);
-    fname = l{i};
+    fname = l{i};   % Unix hack!
     if ~isdir(fname)
         s = strsplit(fname(1:end-5), '_');
         if strcmp(s(1), user)
