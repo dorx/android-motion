@@ -66,19 +66,9 @@
 	     />
 	</RelativeLayout>
 	<!--  Calorie Count -->
-	
-	<EditText 
-		android:id="@+id/txtAmount" 
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content" 
-		android:numeric="decimal"
-		android:layout_column="2"
-		android:layout_span="2"
-		android:hint="@string/height"
-		/>			
 
 	<EditText 
-		android:id="@+id/txtPeople" 
+		android:id="@+id/txtAmount" 
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content" 
 		android:numeric="integer"
@@ -93,8 +83,9 @@
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
 		android:layout_column="0"
-		android:layout_span="3"
-		android:checkedButton="@+id/radioFifteen">
+		android:layout_span="2"
+>
+		
 		<RadioButton android:id="@+id/radioFifteen"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" 
@@ -104,11 +95,6 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="@string/rdoTxt20"
-			android:textSize="15sp" />
-		<RadioButton android:id="@+id/radioOther"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/rdoTxtOther" 
 			android:textSize="15sp" />
 	</RadioGroup>
 	
@@ -125,7 +111,10 @@
 			android:id="@+id/txtTipOther" 
 			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content"
-			android:numeric="decimal"/>			
+			android:hint="@string/time"
+			android:numeric="integer"/>
+			
+						
 <RelativeLayout android:id="@+id/RelativeLayout01" android:layout_width="fill_parent" android:layout_height="wrap_content">
 	<Button 
 		android:id="@+id/btnReset" 
@@ -150,32 +139,6 @@
 		android:text="@string/textLbl4"/>
 	<TextView 
 		android:id="@+id/txtTipAmount" 
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content" 
-		android:layout_column="2"
-		android:layout_span="2"/>			
-
-	<TextView 
-		android:id="@+id/txtLbl5" 
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content"
-		android:layout_column="0"
-		android:text="@string/textLbl5"/>
-	<TextView 
-		android:id="@+id/txtTotalToPay" 
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content" 
-		android:layout_column="2"
-		android:layout_span="2"/>			
-	
-	<TextView 
-		android:id="@+id/txtLbl6" 
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content"
-		android:layout_column="0"
-		android:text="@string/textLbl6"/>
-	<TextView 
-		android:id="@+id/txtTipPerPerson" 
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content" 
 		android:layout_column="2"

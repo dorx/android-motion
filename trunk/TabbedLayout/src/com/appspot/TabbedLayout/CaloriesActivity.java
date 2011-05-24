@@ -13,6 +13,7 @@ import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
@@ -20,32 +21,27 @@ public class CaloriesActivity extends TopBarActivity {
 	
 	
 	// Widgets in the application
-	private EditText txtAmount;
-	private EditText txtPeople;
-	private EditText txtTipOther;
+	private EditText weight;
+	private EditText total_time;
 	private RadioGroup rdoGroupTips;
 	private Button btnCalculate;
 	private Button btnReset;
 
 	private TextView txtTipAmount;
-	private TextView txtTotalToPay;
-	private TextView txtTipPerPerson;
+
 
 	// For the id of radio button selected
 	private int radioCheckedId = -1;
 	
-	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.calories);
-        
-        
-		txtAmount = (EditText) findViewById(R.id.txtAmount);
+    
+    	weight = (EditText) findViewById(R.id.txtAmount);
 		// On app load, the cursor should be in the Amount field
-		txtAmount.requestFocus();
+		weight.requestFocus();
 
-		txtPeople = (EditText) findViewById(R.id.txtPeople);
-		txtTipOther = (EditText) findViewById(R.id.txtTipOther);
+		total_time = (EditText) findViewById(R.id.txtTipOther);
 
 		rdoGroupTips = (RadioGroup) findViewById(R.id.RadioGroupTips);
 
@@ -56,11 +52,6 @@ public class CaloriesActivity extends TopBarActivity {
 		btnReset = (Button) findViewById(R.id.btnReset);
 
 		txtTipAmount = (TextView) findViewById(R.id.txtTipAmount);
-		txtTotalToPay = (TextView) findViewById(R.id.txtTotalToPay);
-		txtTipPerPerson = (TextView) findViewById(R.id.txtTipPerPerson);
-
-		// On app load, disable the 'Other tip' percentage text field
-		txtTipOther.setEnabled(false);
 
 		/*
 		 * Attach a OnCheckedChangeListener to the radio group to monitor radio
@@ -73,30 +64,16 @@ public class CaloriesActivity extends TopBarActivity {
 				// Enable/disable Other Percentage tip field
 				if (checkedId == R.id.radioFifteen
 						|| checkedId == R.id.radioTwenty) {
-					txtTipOther.setEnabled(false);
+					
 					/*
 					 * Enable the calculate button if Total Amount and No. of
 					 * People fields have valid values.
 					 */
-					btnCalculate.setEnabled(txtAmount.getText().length() > 0
-							&& txtPeople.getText().length() > 0);
+					btnCalculate.setEnabled(weight.getText().length() > 0
+							&& total_time.getText().length() > 0);
 				}
-				if (checkedId == R.id.radioOther) {
-					// enable the Other Percentage tip field
-					txtTipOther.setEnabled(true);
-					// set the focus to this field
-					txtTipOther.requestFocus();
-					/*
-					 * Enable the calculate button if Total Amount and No. of
-					 * People fields have valid values. Also ensure that user
-					 * has entered a Other Tip Percentage value before enabling
-					 * the Calculate button.
-					 */
-					btnCalculate.setEnabled(txtAmount.getText().length() > 0
-							&& txtPeople.getText().length() > 0
-							&& txtTipOther.getText().length() > 0);
-				}
-				// To determine the tip percentage choice made by user
+
+				
 				radioCheckedId = checkedId;
 			}
 		});
@@ -105,44 +82,25 @@ public class CaloriesActivity extends TopBarActivity {
 		 * Attach a KeyListener to the Tip Amount, No. of People and Other Tip
 		 * Percentage text fields
 		 */
-		txtAmount.setOnKeyListener(mKeyListener);
-		txtPeople.setOnKeyListener(mKeyListener);
-		txtTipOther.setOnKeyListener(mKeyListener);
+		weight.setOnKeyListener(mKeyListener);
+		total_time.setOnKeyListener(mKeyListener);
 
 		/* Attach listener to the Calculate and Reset buttons */
 		btnCalculate.setOnClickListener(mClickListener);
 		btnReset.setOnClickListener(mClickListener);
 	}
 
-	/*
-	 * KeyListener for the Total Amount, No of People and Other Tip Percentage
-	 * fields. We need to apply this key listener to check for following
-	 * conditions:
-	 *
-	 * 1) If user selects Other tip percentage, then the other tip text field
-	 * should have a valid tip percentage entered by the user. Enable the
-	 * Calculate button only when user enters a valid value.
-	 *
-	 * 2) If user does not enter values in the Total Amount and No of People, we
-	 * cannot perform the calculations. Hence enable the Calculate button only
-	 * when user enters a valid values.
-	 */
 	private OnKeyListener mKeyListener = new OnKeyListener() {
 		@Override
 		public boolean onKey(View v, int keyCode, KeyEvent event) {
 
-			switch (v.getId()) {
-			case R.id.txtAmount:
-			case R.id.txtPeople:
-				btnCalculate.setEnabled(txtAmount.getText().length() > 0
-						&& txtPeople.getText().length() > 0);
-				break;
-			case R.id.txtTipOther:
-				btnCalculate.setEnabled(txtAmount.getText().length() > 0
-						&& txtPeople.getText().length() > 0
-						&& txtTipOther.getText().length() > 0);
-				break;
-			}
+//			switch (v.getId()) {
+//			case R.id.txtAmount:
+				btnCalculate.setEnabled(weight.getText().length() > 0
+						&& total_time.getText().length() > 0);
+//				break;
+
+//			}
 			return false;
 		}
 
@@ -168,52 +126,46 @@ public class CaloriesActivity extends TopBarActivity {
 	 * Calculate the tip as per data entered by the user.
 	 */
 	private void calculate() {
-		Double billAmount = Double.parseDouble(txtAmount.getText().toString());
-		Double totalPeople = Double.parseDouble(txtPeople.getText().toString());
-		Double percentage = null;
+		
+		int METSvalue = 1;
+		Double kg_adjustment = 1.0;
+		
+		final Spinner feedbackSpinner = (Spinner) findViewById(R.id.SpinnerFeedbackType);  
+		String feedbackType = feedbackSpinner.getSelectedItem().toString(); 
+		
+		Double weight_calc = Double.parseDouble(weight.getText().toString());
+		Double activity_time = Double.parseDouble(total_time.getText().toString());
+
 		boolean isError = false;
-		if (billAmount < 1.0) {
-			showErrorAlert("Enter a valid Total Amount.", txtAmount.getId());
+		if (activity_time < 1.0) {
+			showErrorAlert("Please enter a valid time.", total_time.getId());
 			isError = true;
 		}
-
-		if (totalPeople < 1.0) {
-			showErrorAlert("Enter a valid value for No. of people.", txtPeople
-					.getId());
-			isError = true;
+		
+		// Get METS value for activities 
+		if (feedbackType == "Walking") {
+			METSvalue = 3;
+		} else if (feedbackType == "Biking") {
+			METSvalue = 4; 
+		} else if (feedbackType == "Running") {
+			METSvalue = 10;
 		}
 
-		/*
-		 * If user never changes radio selection, then it means the default
-		 * selection of 15% is in effect. But its safer to verify
-		 */
+		// Adjust for metric/imperial units
 		if (radioCheckedId == -1) {
 			radioCheckedId = rdoGroupTips.getCheckedRadioButtonId();
 		}
 		if (radioCheckedId == R.id.radioFifteen) {
-			percentage = 15.00;
+			kg_adjustment = 1.0;
 		} else if (radioCheckedId == R.id.radioTwenty) {
-			percentage = 20.00;
-		} else if (radioCheckedId == R.id.radioOther) {
-			percentage = Double.parseDouble(txtTipOther.getText().toString());
-			if (percentage < 1.0) {
-				showErrorAlert("Enter a valid Tip percentage", txtTipOther
-						.getId());
-				isError = true;
-			}
-		}
-		/*
-		 * If all fields are populated with valid values, then proceed to
-		 * calculate the tips
-		 */
-		if (!isError) {
-			Double tipAmount = ((billAmount * percentage) / 100);
-			Double totalToPay = billAmount + tipAmount;
-			Double perPersonPays = totalToPay / totalPeople;
+			kg_adjustment = 2.2;
+		} 
 
-			txtTipAmount.setText(tipAmount.toString());
-			txtTotalToPay.setText(totalToPay.toString());
-			txtTipPerPerson.setText(perPersonPays.toString());
+		if (!isError) {
+			Double weight_metric = weight_calc / kg_adjustment;
+			Double calories_burned = (weight_metric * METSvalue) * (activity_time / 60); 
+
+			txtTipAmount.setText(calories_burned.toString());
 		}
 	}
 
@@ -223,15 +175,12 @@ public class CaloriesActivity extends TopBarActivity {
 	 */
 	private void reset() {
 		txtTipAmount.setText("");
-		txtTotalToPay.setText("");
-		txtTipPerPerson.setText("");
-		txtAmount.setText("");
-		txtPeople.setText("");
-		txtTipOther.setText("");
+		weight.setText("");
+		total_time.setText("");
+
 		rdoGroupTips.clearCheck();
-		rdoGroupTips.check(R.id.radioFifteen);
 		// set focus on the first field
-		txtAmount.requestFocus();
+		weight.requestFocus();
 	}
 
 	/**
