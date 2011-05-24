@@ -10,6 +10,9 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -26,9 +29,10 @@ public class CaloriesActivity extends TopBarActivity {
 	private RadioGroup rdoGroupTips;
 	private Button btnCalculate;
 	private Button btnReset;
+	private int feedbackType;
+	private TextView valuePicked;
 
 	private TextView txtTipAmount;
-
 
 	// For the id of radio button selected
 	private int radioCheckedId = -1;
@@ -37,6 +41,26 @@ public class CaloriesActivity extends TopBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.calories);
     
+        
+        Spinner spinner = (Spinner) findViewById(R.id.SpinnerFeedbackType);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this, R.array.feedbacktypelist, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+        
+	        public void onItemSelected(AdapterView<?> parent,
+	                View view, int pos, long id) {
+	            	feedbackType = pos;
+	            }
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+        });
+        
     	weight = (EditText) findViewById(R.id.txtAmount);
 		// On app load, the cursor should be in the Amount field
 		weight.requestFocus();
@@ -52,6 +76,7 @@ public class CaloriesActivity extends TopBarActivity {
 		btnReset = (Button) findViewById(R.id.btnReset);
 
 		txtTipAmount = (TextView) findViewById(R.id.txtTipAmount);
+		valuePicked = (TextView) findViewById(R.id.valuePicked);
 
 		/*
 		 * Attach a OnCheckedChangeListener to the radio group to monitor radio
@@ -94,13 +119,9 @@ public class CaloriesActivity extends TopBarActivity {
 		@Override
 		public boolean onKey(View v, int keyCode, KeyEvent event) {
 
-//			switch (v.getId()) {
-//			case R.id.txtAmount:
 				btnCalculate.setEnabled(weight.getText().length() > 0
 						&& total_time.getText().length() > 0);
-//				break;
 
-//			}
 			return false;
 		}
 
@@ -127,11 +148,8 @@ public class CaloriesActivity extends TopBarActivity {
 	 */
 	private void calculate() {
 		
-		int METSvalue = 1;
-		Double kg_adjustment = 1.0;
-		
-		final Spinner feedbackSpinner = (Spinner) findViewById(R.id.SpinnerFeedbackType);  
-		String feedbackType = feedbackSpinner.getSelectedItem().toString(); 
+		int METSvalue;
+		Double kg_adjustment = 1.0; 
 		
 		Double weight_calc = Double.parseDouble(weight.getText().toString());
 		Double activity_time = Double.parseDouble(total_time.getText().toString());
@@ -142,16 +160,21 @@ public class CaloriesActivity extends TopBarActivity {
 			isError = true;
 		}
 		
-		// Get METS value for activities 
-		if (feedbackType == "Walking") {
+		// Get METS value for activities
+		
+		if (feedbackType == 1) {
 			METSvalue = 3;
-		} else if (feedbackType == "Biking") {
-			METSvalue = 4; 
-		} else if (feedbackType == "Running") {
+		} else if (feedbackType == 2) {
+			METSvalue = 4;
+		} else if (feedbackType == 3) {
 			METSvalue = 10;
+		} else {
+			METSvalue = 1;
 		}
 
+		
 		// Adjust for metric/imperial units
+
 		if (radioCheckedId == -1) {
 			radioCheckedId = rdoGroupTips.getCheckedRadioButtonId();
 		}
@@ -166,6 +189,7 @@ public class CaloriesActivity extends TopBarActivity {
 			Double calories_burned = (weight_metric * METSvalue) * (activity_time / 60); 
 
 			txtTipAmount.setText(calories_burned.toString());
+
 		}
 	}
 
