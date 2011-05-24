@@ -5,4 +5,25 @@
     <string name="settings">Settings</string>
     <string name="logout">Logout</string>
     <string name="username">User</string>
+    
+    
+    <string name="height">Height</string>
+	<string name="weight">Weight</string>
+	<string name="textLbl3">Tip Percentage:</string>
+	<string name="textLbl4">Tip Amount:</string>
+	<string name="textLbl5">Total to Pay:</string>
+	<string name="textLbl6">Total per Person:</string>
+	<string name="btnCalculate">Calculate</string>
+	<string name="btnReset">Reset</string>
+	<string name="rdoTxt15">Metric</string>
+	<string name="rdoTxt20">Imperial</string>
+	<string name="rdoTxtOther">Other</string>
+	
+	<string name="motiontype">Activity:</string>
+	<string name="type1">Idling</string>  
+    <string name="type2">Walking</string>  
+    <string name="type3">Biking</string>  
+    <string name="type4">Running</string>  
+	
+    
 </resources>
