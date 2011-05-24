@@ -36,7 +36,10 @@ public class CaloriesActivity extends TopBarActivity {
         
         try {
 			FileInputStream fis = openFileInput(MotionActivity.FILENAME);
-			byte[] buffer = new byte[fis.available()];
+			int length = fis.available();
+			if (length > 100000)
+				length = 100000;
+			byte[] buffer = new byte[length];
 			int success = fis.read(buffer);
 			String s = new String(buffer);
 			v.setText(s);

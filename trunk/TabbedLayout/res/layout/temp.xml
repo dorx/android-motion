@@ -111,4 +111,9 @@
 	        android:text="My Application" />
 	
 	</RelativeLayout>
+    <TextView
+    android:id="@+id/text_view"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    />
 </LinearLayout>
