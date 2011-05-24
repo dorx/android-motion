@@ -86,6 +86,8 @@ public class HelloGoogleMaps extends MapActivity implements LocationListener {
 	protected void onResume()
 	{
 		super.onResume();
+		
+		System.out.println("resuming");
 		// Where am I?
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		location = locationManager
@@ -194,6 +196,8 @@ public class HelloGoogleMaps extends MapActivity implements LocationListener {
     		// create my overlay and show it
     		HelloItemizedOverlay overlay = new HelloItemizedOverlay(icon, this);
     		OverlayItem item = new OverlayItem(geopoint, "My Location", null);
+    		if (MotionActivity.classification != null)
+    			item = new OverlayItem(geopoint, "My Location. " + MotionActivity.classification.getText(), null);
     		overlay.addOverlay(item);
     		myMap.getOverlays().add(overlay);
      
