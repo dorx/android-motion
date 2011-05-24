@@ -32,6 +32,8 @@ public class MotionActivity extends TopBarActivity  implements SensorEventListen
 	public static TextView classification;
 	private FileOutputStream fos;
 	
+	private int counter = 0;
+	
 	private SoundManager mSoundManager;
 	
     /**
@@ -109,8 +111,10 @@ values[0] + ", y: " + values[1] + ", z: " + values[2]);
 			        }
 			        
 			    	int LENGTH = 512;
-			        if (measurements.size() >= LENGTH && Math.random() < .04)
+			    	counter++;
+			        if (measurements.size() >= LENGTH && counter == 512)
 			        {
+			        	counter = 0;
 			        	Complex[] c = new Complex[LENGTH];
 			        	for (int i = 0; i < LENGTH; i++)
 			        	{
@@ -155,6 +159,7 @@ values[0] + ", y: " + values[1] + ", z: " + values[2]);
 			        	double resultWvB = walkingVsBiking(red);
 			        	double resultRvB = runningVsBiking(red);
 			        	double resultIvB = idlingVsBiking(red);
+			        	System.out.println(resultWvI + " " + resultRvI+ " " + resultWvR+ " " + resultWvB+ " " + resultRvB+ " " + resultIvB);
 			        	
 			        	double w = (resultWvI + resultWvR + resultWvB) / 3;
 			        	double r = (resultRvI + (1 - resultWvR) + resultRvB) / 3;
@@ -163,25 +168,25 @@ values[0] + ", y: " + values[1] + ", z: " + values[2]);
 			        	
 			        	if (i > r && i > w && i > b)
 			        	{
-			        		if (((String)classification.getText()).indexOf("Idling") == -1)
+			        		if (((String)classification.getText()).indexOf("Idling") == -1 || true)
 			        			mSoundManager.playSound(1);
 			        		classification.setText(/*meanF + " " + stdF + " " + energyF + */"Activity: Idling " + i);
 			        	}
 			        	else if (r > i && r > w && r > b)
 			        	{
-			        		if (((String)classification.getText()).indexOf("Running") == -1)
+			        		if (((String)classification.getText()).indexOf("Running") == -1 || true)
 			        			mSoundManager.playSound(2);
 			        		classification.setText(/*meanF + " " + stdF + " " + energyF + */"Activity: Running " + r);
 			        	}
 			        	else if (w > i && w > r && w > b)
 			        	{
-			        		if (((String)classification.getText()).indexOf("Walking") == -1)
+			        		if (((String)classification.getText()).indexOf("Walking") == -1 || true)
 			        			mSoundManager.playSound(3);
 			        		classification.setText(/*meanF + " " + stdF + " " + energyF + */"Activity: Walking " + w);
 			        	}
 			        	else
 			        	{
-			        		if (((String)classification.getText()).indexOf("Biking") == -1)
+			        		if (((String)classification.getText()).indexOf("Biking") == -1 || true)
 			        			mSoundManager.playSound(4);
 			        		classification.setText(/*meanF + " " + stdF + " " + energyF + */"Activity: Biking " + b);
 			        	}
@@ -200,6 +205,8 @@ values[0] + ", y: " + values[1] + ", z: " + values[2]);
     public double walkingVsIdling(double[] red)
     {
     	// For walking vs idling {1, 3, x} with x between 1 and 3.
+    	
+    	/** Alex's weights
     	double[][] w1 = {{0.8438 ,   1.0632  ,  0.0293 ,   0.5072},
     	    {0.5896 ,   0.5305 , -0.9537  , -2.2006},
     	    {1.1394  , -0.9506 ,  -1.4211 ,   3.4108},
@@ -212,6 +219,19 @@ values[0] + ", y: " + values[1] + ", z: " + values[2]);
     		   {-0.4548  , -2.8627  ,  2.0919  , -1.0710 ,   0.1422 ,   1.1696},
     		    {1.0399 ,  -1.1573  ,  1.6427  , -1.6365 ,  -3.1910  ,  1.6093}};
     	double[][] w3 = {{-3.3153 ,  -0.3032 ,  -1.1334 ,  -2.0590 ,  -3.9007 ,   4.5734}};
+    	**/
+    	/** Dai Wei's weights **/
+    	double[][] w1 = {{1.4722 ,  -1.9585  ,  0.5958 ,   0.0163},
+    	        {2.9524  , -5.0743 ,   1.4579  ,  3.4363},
+    	        {2.8172  , -2.6679  ,  1.4274 ,   0.9180},
+    	        {1.6689  ,  2.1630 ,  -2.9614 ,  -6.1193},
+    	        {3.8175  ,  5.7970 ,  -1.6670 ,  -0.4188}};
+    	    	double[][] w2 = {{-0.4984 ,  -2.7277 ,  -2.2438  ,  3.8381 ,   1.1638,   -0.7755},
+    	    		   {-1.6224 ,  -2.8382  , -1.5403   , 2.4800  ,  1.6106  , -1.1076},
+    	    		   {-1.8177 ,  -3.7288  , -1.5079  ,  3.2357  ,  1.1203 ,  -0.1257},
+    	    		   {-0.6175 ,  -1.2671  , -1.0422  ,  1.3612 ,   4.3499 ,   0.0700},
+    	    		   {-0.2890 ,  -1.0655  , -1.4881 ,   1.0440  ,  5.3336 ,  -0.4757}};
+    	    	double[][] w3 = {{4.2087 ,   2.3846 ,  -0.0957   , 2.8367  ,  1.4591 ,  -6.1199}};
     	
     	
     	double[] result = sigmoidM(multiplyVectorWithOne(w3,
@@ -222,7 +242,7 @@ values[0] + ", y: " + values[1] + ", z: " + values[2]);
     public double walkingVsRunning(double[] red)
     {
     	// For walking vs idling {1, 3, x} with x between 1 and 3.
-    	double[][] w1 = {{-0.4470,    1.7171,   -0.9534  ,  0.7626},
+    	/*double[][] w1 = {{-0.4470,    1.7171,   -0.9534  ,  0.7626},
     		   {-0.9541 ,  -0.5000  , -2.3893  , -1.2829},
     		   {-1.1919 ,   0.6473  ,  2.3547  ,  0.2526},
     		   {-0.1138 ,   0.9742  , -0.0610  , -2.2409},
@@ -233,8 +253,19 @@ values[0] + ", y: " + values[1] + ", z: " + values[2]);
     	    {-0.5968,   -1.0311 , -1.0334  ,  0.8897  ,  0.8999 ,   1.1015},
     	     {0.7603 ,  -1.1215  , -1.1155 , -1.5519 ,   0.9419 ,   0.1604},
     	    {-0.3473  ,  0.1873 ,  -1.7453 ,   0.6958 ,   1.1072  , -0.0843}};
-    	double[][] w3 = {{-0.3862  , -8.2719,   -2.5574 ,  -0.1003 ,  -6.2207,    5.1501}};
-    	
+    	double[][] w3 = {{-0.3862  , -8.2719,   -2.5574 ,  -0.1003 ,  -6.2207,    5.1501}};*/
+    	double[][] w1 = {{0.5925 ,   1.1153  ,  0.0540 ,  -1.7069},
+        	    {1.6419,   -2.0247 ,  -0.8192  ,  0.7496},
+        	    {-3.9635 ,   0.3355 ,   8.4632 ,  -2.8420},
+        	    {-0.6051  ,  0.8641 ,   0.6781  ,  0.8028},
+        	    {-0.4423  , -1.1931 ,   0.1522 ,   1.0075},
+            	};
+        	double[][] w2 = {{-2.4939 ,   2.9850  , -2.5728 ,   0.9658  ,  0.7294 ,   1.8060},
+        		   {-0.6908  , -1.0106 ,  -2.7828 ,   0.1931 ,   1.6303  ,  0.9176},
+        		    {0.4939  , -2.0008 ,  -1.9998  , -1.3234 ,  -0.7185  , -0.3844},
+        		   {-1.7051 ,   0.5564 ,  -3.0171 ,   1.6455  ,  0.6563  ,  0.9569},
+        		    {1.0649 ,   1.1601 ,  -3.4705 ,  -0.6424  ,  0.6973  ,  0.8095}};
+        	double[][] w3 = {{3.4561 ,   2.4165 ,  -0.3188 ,   4.6202 ,   4.3906  , -5.7724}};
     	
     	double[] result = sigmoidM(multiplyVectorWithOne(w3,
     						sigmoidM(multiplyVectorWithOne(w2,
@@ -243,6 +274,7 @@ values[0] + ", y: " + values[1] + ", z: " + values[2]);
     }
     public double walkingVsBiking(double[] red)
     {
+    	/** Alex's
     	double[][] w1 = {{0.4503  , -0.8868  , -0.6072 ,   0.6090},
     		   {-3.7071  ,  0.0002 ,   3.6950 ,   4.0711},
     		   {-2.0433 ,   0.0128 ,   2.4876  ,  0.6996},
@@ -260,11 +292,32 @@ values[0] + ", y: " + values[1] + ", z: " + values[2]);
     						sigmoidM(multiplyVectorWithOne(w2,
     						sigmoidM(multiplyVectorWithOne(w1, red))))));
     	
-    	return result[0];
+    	return result[0];**/
+    	
+    	/** Dai Wei's Is inverse of biking vs walking **/
+    	double[][] w1 = {{-4.2738  ,  2.5944  ,  3.0673 ,  -1.5461},
+        {4.1430 ,   1.2800 ,  -4.5021  , -2.8739},
+        {1.6694 ,  -4.0981 ,  -2.0720 ,   3.5636},
+        {6.9778 ,   0.7672 ,   7.1223 , -16.2948},
+       {-4.3011 ,  -0.8088 ,   3.2186 ,   2.1056}};
+    	double[][] w2 = {{-2.4505  ,  2.1403  ,  2.7100 ,  -4.1178,   -2.0975 ,  -0.2945},
+    		   {-1.1005  ,  5.1699 ,   2.3689 ,  -4.4155 ,  -2.5370,   -0.5900},
+    		   {-0.8498 ,  -1.3325  , -0.6585 ,  -0.9397 ,  -1.1867 ,  -1.3923},
+    		   {-1.4127 ,   0.3475  ,  2.2177 ,  -4.2192 ,  -2.9297 ,   0.2718},
+    		   {-2.3659 ,   1.7898 ,   2.1888 ,  -3.7840 ,  -0.4472 ,  -0.6111}};
+    	double[][] w3 = {{5.2390 ,   4.6036 ,  -1.1818  ,  0.5058 ,   3.0875 ,  -5.3338}};
+    	
+    	double[] result = sigmoidM(multiplyVectorWithOne(w3,
+				sigmoidM(multiplyVectorWithOne(w2,
+				sigmoidM(multiplyVectorWithOne(w1, red))))));
+
+    	return 1 - result[0];
+    	
     }
     
     public double runningVsIdling(double[] red)
     {
+    	/** Alex's
     	double[][] w1= {{-0.7097  , -0.5873,   -1.9263 ,   0.5169},
     	   {-1.2026 ,  -0.0614 ,   1.4148 ,  -0.5318},
     	    {0.6214 ,  -0.9253 ,  -0.9599 ,  -1.7551},
@@ -276,6 +329,20 @@ values[0] + ", y: " + values[1] + ", z: " + values[2]);
     	   {-0.4133  ,  2.3093  , -1.5449  ,  0.2662 ,  -0.1146  ,  1.6439},
     	    {0.0374  ,  1.1677  ,  0.1279  ,  2.4488 ,   0.1081  ,  0.4092}};
     	double[][] w3 = {{-4.2704  , -1.0621,   -2.6289,    3.6779 ,  -0.6997 ,   0.3744}};
+    	**/
+    	/** Dai Wei's **/
+    	double[][] w1 = {{-0.5766 ,   1.9294  ,  0.4134  , -2.1893},
+    		   {-0.1956  , -1.3624 ,  -0.0538 ,   1.5302},
+    		    {0.6113  , -0.7352 ,   0.3812  , -3.1897},
+    		    { 1.3487 ,  -0.0461 ,   0.3137 ,  -0.5180},
+    		   {-0.0672  ,  0.6886  , -0.6397  , -3.4115}};
+    	double[][] w2 = {{-1.7685 ,   1.5302  ,  0.6056 ,  -1.2990 ,  -1.5639 ,   1.7809},
+    			{ -0.2911 ,   0.8957 ,   0.3391  ,  0.5465 ,  -3.2401  ,  0.5604},
+    			{ -2.1994 ,   0.9390 ,   0.8706 ,  0.0451 ,  -1.9868 ,   1.4345},
+    		    {0.4412  ,  2.3826  ,  2.1131 ,  -0.4041 ,  -2.5782 ,  -0.0603},
+    		   {-0.3930 ,  -0.7617,   -0.3539 ,  -0.8433 ,  -2.3750 ,   1.0385}};
+    	double[][] w3 = {{-3.9249,   -0.2120,   -0.7358 ,  -0.5467 ,  -2.5034 ,   2.1956}};
+    	
     	
     	double[] result = sigmoidM(multiplyVectorWithOne(w3,
 				sigmoidM(multiplyVectorWithOne(w2,
@@ -284,6 +351,7 @@ values[0] + ", y: " + values[1] + ", z: " + values[2]);
     }
     public double runningVsBiking(double[] red)
     {
+    	/** Alex's
     	double[][] w1= {{-1.0191  ,  0.9259 ,  -2.3346  ,  0.8495},
     		   {-1.9253 ,  -0.1467 ,  -0.4244,   -1.6250},
     		   {-0.6567 ,   0.2978 ,  -1.2139,    0.8782},
@@ -295,6 +363,19 @@ values[0] + ", y: " + values[1] + ", z: " + values[2]);
     		   {-2.3810 ,  -2.6476 ,  -1.5789 ,  -2.2947 ,   0.1062 ,   1.7273},
     		   {-1.3327 ,   0.6449 ,   0.7183 ,  -1.0328  ,  0.5000  , -2.2677}};
     	double[][] w3 = {{3.8811  ,  0.3503 ,   0.2879  ,  4.5723  , -1.0723 ,  -3.5545}};
+    	**/
+    	double[][] w1 = {{-0.5255  , -0.8688  , -1.1667 ,   0.1114},
+    		   {-1.2018 ,   0.3578 ,  -6.0854 ,   6.8071},
+    		   {-0.5147  , -0.5201  ,  6.4264 ,  -1.3746},
+    		   {-0.2754  ,  2.0673  , -2.7087 ,  -1.9956},
+    		    {0.9022 ,   2.3517  ,  1.2702 ,   2.3998}};
+    	double[][] w2 = {{0.6859 ,  -4.5967  ,  1.1295 ,  -0.4304  ,  0.0440  ,  0.4048},
+    	    {0.0820 ,  -3.0000  ,  1.8895 ,  -1.3776 ,   0.3029 ,  -0.2510},
+    	    {-0.9805 ,   2.7156 ,   1.8527 ,   1.9195 ,   0.3366 ,  -0.0061},
+    	     {1.5662 ,  -2.0677 ,   3.2188 ,  -1.2552 ,   0.6673  ,  0.3389},
+    	     {0.5225 ,  -3.9919 ,   1.8297 ,  -1.0130 ,   1.9164  , -1.7525}};
+    	double[][] w3 = {{5.0076 ,   2.0873 ,  -3.3136 ,   2.4724 ,   2.1287 ,  -1.1767}};
+    	
     	
     	double[] result = sigmoidM(multiplyVectorWithOne(w3,
 				sigmoidM(multiplyVectorWithOne(w2,
@@ -303,6 +384,7 @@ values[0] + ", y: " + values[1] + ", z: " + values[2]);
     }
     public double idlingVsBiking(double[] red)
     {
+    	/** Alex's
     	double[][] w1= {{-3.9762 ,   2.0561  , -1.2829 ,  -1.2573},
     	    {0.0971  ,  2.0607 ,  -0.8261 ,  -2.1496},
     	    {0.3415  ,  0.0547 ,  -0.7838 ,  -1.5499},
@@ -314,6 +396,18 @@ values[0] + ", y: " + values[1] + ", z: " + values[2]);
     	    {2.3992 ,   2.0529  ,  0.0222 ,  -0.2192  ,  0.0856  , -2.8257},
     	   {-1.2395 ,  -1.7078  ,  1.7687  , -1.5538  ,  0.6768  , -2.4540}};
     	double[][] w3 = {{-2.5500 ,  -3.3893 ,  -3.5239 ,  -5.2636  ,  3.6292   , 6.4226}};
+    	**/
+    	double[][] w1 = {{-2.2076 ,  -1.2178  ,  0.0590 ,  -2.0975},
+        {1.0165  , -1.3962  , -1.9381 ,   0.6863},
+        {-0.4090 ,  -1.6753 ,   1.6369 ,   0.9666},
+         {0.3730 ,  -1.8870 ,   0.6730 ,   1.5960},
+         {1.2430 ,   1.7348 ,  -1.0034 ,  -2.0265}};
+    	double[][] w2 = {{-0.5327 ,  -0.4096  ,  2.1832  ,  1.4574  , -2.6252  , -0.5355},
+    		   {-0.7549  ,  1.2053  ,  1.9769 ,   1.6263 ,  -2.2536  , -0.9667},
+    		   { 1.9947 ,   0.4658  , -0.5554 ,   3.2372 ,  -2.6993  , -0.3998},
+    		   {-0.6772 ,  0.3370  ,  1.2786 ,   2.0075 ,  -2.5584  , -0.5160},
+    		   {-0.0392 ,   1.3034   , 2.1858 ,  -0.1886 ,  -1.8885  , -0.6332}};
+    	double[][] w3 = {{3.4588 ,   1.7783 ,   0.1612 ,   1.4833  , -1.5121 ,  -1.9684}};
     	
     	double[] result = sigmoidM(multiplyVectorWithOne(w3,
 				sigmoidM(multiplyVectorWithOne(w2,
