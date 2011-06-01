@@ -1,0 +1,9 @@
+subplot(2,2,1);
+     ph1=plot(rand(10,2),'s-');
+     subplot(2,2,3:4);
+     ph2=plot(rand(10,3),'o-');
+     sh=subplot(2,2,2);
+     p=get(sh,'position');
+     lh=legend(sh,[ph1;ph2]);
+     set(lh,'position',p);
+     axis(sh,'off');

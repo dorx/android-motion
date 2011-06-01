@@ -1,0 +1,95 @@
+clear all; % cleans up all variables
+close all; % closes all figures
+clc; % clean up the command window too
+
+
+possibleActs = ['walking   ';
+                'running   ';
+                %'sitting   ';
+                'idling    ';
+                %'upstairs  ';
+                %'downstairs';
+                'biking    '];
+possibleActs = cellstr(possibleActs);
+possibleUser = ['Alex  ';
+                'Daiwei';
+                'Doris ';
+                'Robert';
+                'Wenqi '];
+possibleUsers = cellstr(possibleUser);
+rootDir = 'SensorRecordings';
+
+user = possibleUsers(1)
+%activity = possibleActs(1)
+
+nacts = length(possibleActs);
+
+confusionM = zeros(nacts);
+
+for i=1:nacts
+    for j=1:nacts
+        if i == j
+            continue
+        end
+    
+%{        
+        act1 = possibleActs(i);
+        act2 = possibleActs(j);
+        display(strcat(act1, '.', act2));
+
+%[X, Y] = rawTrainingDataOVA(rootDir, user, activity);
+[XX, YY] = rawTrainingDataOVO_unix(rootDir, user, act1, act2);
+%redX = reduction(X);
+redXX = reduction3(XX);
+
+
+        
+num1 = sum(YY);
+num0 = sum(1 - YY);
+
+num = min(num0, num1);
+% ones appear first when running rawTrainingData
+data = [redXX(1:int32(num / 2), :); redXX((num1+1):(num1+int32(num/2)), :)];
+values = [YY(1:int32(num / 2), :); YY((num1+1):(num1+int32(num/2)), :)];
+dataTest = [redXX(int32(num/2):num, :); redXX((num1+int32(num/2)+1):(num1+num), :)];
+valuesTest = [YY(int32(num/2):num, :); YY((num1+int32(num/2)+1):(num1+num), :)];
+
+%}
+        % ntrain1 : number of data in training set TRAIN{i}
+        % ntrain2 : number of data in training set TRAIN{j}
+        % ntest1 : number of data in training set TEST{i}
+        % ntest2 : number of data in training set TEST{j}
+        % nfeatures : unused variable
+        ntrain1 = size(TRAIN{i}, 1);
+        ntrain2 = size(TRAIN{j}, 1);
+        ntest1  = size(TEST{i} , 1);
+        ntest2  = size(TEST{j} , 1);
+        
+        % To avoid bias, make trainset to have equal amount of act1 and
+        %   act2. Test set does not have this constraint.
+        ntrain = min(ntrain1, ntrain2);
+        trainset = TRAIN{i}(1:ntrain, :), TRAIN{j}(1:ntrain, :));
+        testset = [TEST{i}(1:ntest1, :), TEST{j}(1:ntest, :));
+        
+        % Label act1 as 0, act2 as 1.
+        trainlabel = [zeros(ntrain, 1); ones(ntrain, 1)];
+        testlabel = [zeros(ntest, 1); ones(ntest, 1)];
+
+[InError, OutError, centers] = kcluster(data, values, dataTest, valuesTest);
+
+%cc = sum(abs(classify3LayerStrict(dataTest', w1, w2, w3)' -  valuesTest))
+
+        %confusionM(i, j) = cc / length(dataTest);
+
+        confusionM(i, j) = OutError;
+    end
+end
+
+%% Images for this section
+% imagesc(mickey3)
+% imagesc(mickey3 - mickey)
+% plot(1:1000, meanTrialError, 1:1000, meanTestError)
+% ylabel('Average Error: (output - expected)^2');
+% xlabel('Number of Epochs: 900 random samples each');
+% title('Error for 2 hidden layers with 10 units each')
+% legend('Average Training Error', 'Average Test Error')

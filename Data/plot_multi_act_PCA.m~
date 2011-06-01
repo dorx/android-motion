@@ -1,0 +1,25 @@
+function plot_multi_act_PCA(DATA)
+%{
+
+FILE: plot_multi_act_PCA.m
+
+USE: Plot the specified 3 dimensions of the input activity sets (up to 6)
+
+PARAMETERS:
+    act1~6: Activity matrices.
+
+INTERNAL PARAMETERS
+    i, j, k: The three dimensions to plot.
+%}
+
+close; % close all figures
+
+
+    ph = plot(  DATA{1}(:,iplot), DATA{1}(:,iplot + 1),'.r', ...
+                DATA{2}(:,iplot), DATA{2}(:,iplot + 1),'.g', ...
+                DATA{3}(:,iplot), DATA{3}(:,iplot + 1),'.c', 'MarkerSize',0.3 ...
+                DATA{4}(:,iplot), DATA{4}(:,iplot + 1),'.b', 'MarkerSize',1);
+            
+end
+
+
