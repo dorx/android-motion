@@ -1,4 +1,4 @@
-clear all; % cleans up all variables
+%clear all; % cleans up all variables
 close all; % closes all figures
 clc; % clean up the command window too
 
@@ -7,8 +7,8 @@ possibleActs = ['walking   ';
                 'running   ';
                 %'sitting   ';
                 'idling    ';
-                'upstairs  ';
-                'downstairs';
+                %'upstairs  ';
+                %'downstairs';
                 'biking    '];
 possibleActs = cellstr(possibleActs);
 possibleUser = ['Alex  ';
@@ -22,13 +22,13 @@ possibleUsers = cellstr(possibleUser);
 user = possibleUsers(1)
 %activity = possibleActs(1)
 
-load('C:\Users\AlexFandrianto\Documents\MATLAB\CS141\BackProp\ReducedData\data_Alex_red3_learnable.mat')
+%load('C:\Users\AlexFandrianto\Documents\MATLAB\CS141\BackProp\ReducedData\data_Alex_red3_learnable.mat')
 
 confusionM = zeros(length(possibleActs));
 
 for i=1:length(possibleActs)
     for j=1:length(possibleActs)
-        if i == j || (i == 4 || i == 5 || j == 4 || j == 5)
+        if i == j %|| (i == 4 || i == 5 || j == 4 || j == 5)
             continue
         end
         
