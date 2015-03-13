@@ -1,0 +1,1 @@
+Applying machine learning techniques to classify accelerometer time series collected on Android phones.
